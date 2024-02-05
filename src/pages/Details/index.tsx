@@ -1,5 +1,10 @@
 import { Container } from './styles'
 
 export function Details() {
-  return <Container>Details</Container>
+  return (
+    <Container>
+      <h1>Details</h1>
+      <span>Eduardo Rodrigues</span>
+    </Container>
+  )
 }
