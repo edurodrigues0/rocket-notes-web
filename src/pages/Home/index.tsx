@@ -6,8 +6,27 @@ import { ButtonText } from '../../components/ButtonText'
 import { Input } from '../../components/Input'
 import { Section } from '../../components/Section'
 import { Note } from '../../components/Note'
+import { useEffect, useState } from 'react'
+import { api } from '../../services/api'
+
+interface Note {
+  id: string
+  title: string
+  user_id: string
+  tags: {
+    id: string
+    name: string
+    note_id: string
+  }[]
+}
 
 export function Home() {
+  const [notes, setNotes] = useState<Note[]>([])
+
+  useEffect(() => {
+    api.get('/notes').then((response) => setNotes(response.data))
+  }, [])
+
   return (
     <Container>
       <Brand>
@@ -39,15 +58,9 @@ export function Home() {
 
       <Content>
         <Section title="Minhas notas">
-          <Note
-            data={{
-              title: 'React',
-              tags: [
-                { id: '1', name: 'Node JS' },
-                { id: '2', name: 'React JS' },
-              ],
-            }}
-          />
+          {notes.map((note) => (
+            <Note key={note.id} data={note} />
+          ))}
         </Section>
       </Content>
 

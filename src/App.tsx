@@ -1,5 +1,10 @@
+import { AuthContextProvider } from './hooks/auth'
 import { Routes } from './routes'
 
 export function App() {
-  return <Routes />
+  return (
+    <AuthContextProvider>
+      <Routes />
+    </AuthContextProvider>
+  )
 }
