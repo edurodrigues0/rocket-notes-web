@@ -1,21 +1,31 @@
 import { FiPlus, FiX } from 'react-icons/fi'
 
 import { Container } from './styles'
-import { MouseEventHandler } from 'react'
+import { ChangeEventHandler, MouseEventHandler } from 'react'
 
 interface NoteItemProps {
-  isNew: boolean
+  isNew?: boolean
   value: string
   onClick: MouseEventHandler
+  onChange?: ChangeEventHandler<HTMLInputElement>
+  placeholder?: string
 }
 
-export function NoteItem({ isNew, value, onClick, ...rest }: NoteItemProps) {
+export function NoteItem({
+  isNew = false,
+  placeholder,
+  onChange,
+  value,
+  onClick,
+  ...rest
+}: NoteItemProps) {
   return (
     <Container $isnew={isNew}>
       <input
         type="text"
-        placeholder="Novo link"
+        placeholder={placeholder}
         value={value}
+        onChange={onChange}
         readOnly={!isNew}
         {...rest}
       />
