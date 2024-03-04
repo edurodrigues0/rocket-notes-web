@@ -20,12 +20,52 @@ interface Note {
   }[]
 }
 
+interface Tag {
+  id: string
+  name: string
+}
+
 export function Home() {
+  const [search, setSearch] = useState('')
   const [notes, setNotes] = useState<Note[]>([])
+  const [tags, setTags] = useState<Tag[]>([])
+  const [tagsSelected, setTagsSelected] = useState<string[]>([])
+
+  function handleTagSelected(tagName: string) {
+    if (tagName === 'all') {
+      return setTagsSelected([])
+    }
+
+    const alreadySelected = tagsSelected.includes(tagName)
+
+    if (alreadySelected) {
+      const filteredTags = tagsSelected.filter((tag) => tag !== tagName)
+
+      return setTagsSelected(filteredTags)
+    }
+
+    setTagsSelected((prevState) => [...prevState, tagName])
+  }
 
   useEffect(() => {
-    api.get('/notes').then((response) => setNotes(response.data))
+    async function fetchTags() {
+      const response = await api.get('/tags')
+      setTags(response.data)
+    }
+
+    fetchTags()
   }, [])
+
+  useEffect(() => {
+    async function fetchNotes() {
+      const response = await api.get(
+        `/notes?title=${search}&&tags=${tagsSelected}`,
+      )
+      setNotes(response.data)
+    }
+
+    fetchNotes()
+  }, [tagsSelected, search])
 
   return (
     <Container>
@@ -37,22 +77,29 @@ export function Home() {
 
       <Menu>
         <li>
-          <ButtonText isActive title="Todos" />
+          <ButtonText
+            title="Todos"
+            onClick={() => handleTagSelected('all')}
+            isActive={tagsSelected.length === 0}
+          />
         </li>
-
-        <li>
-          <ButtonText title="React" />
-        </li>
-
-        <li>
-          <ButtonText title="Node" />
-        </li>
+        {tags &&
+          tags.map((tag) => (
+            <li key={tag.id}>
+              <ButtonText
+                isActive={tagsSelected.includes(tag.name)}
+                onClick={() => handleTagSelected(tag.name)}
+                title={tag.name}
+              />
+            </li>
+          ))}
       </Menu>
 
       <Search>
         <Input
           placeholder="Pesquisar pelo titulo"
           icon={<FiSearch size={20} />}
+          onChange={(event) => setSearch(event.target.value)}
         />
       </Search>
 

@@ -1,6 +1,7 @@
 import { Container } from './styles'
 
-interface ButtonTextProps {
+interface ButtonTextProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   title: string
   isActive?: boolean
 }
