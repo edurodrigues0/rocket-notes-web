@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { FiArrowLeft, FiUser, FiMail, FiLock, FiCamera } from 'react-icons/fi'
 import { useAuth } from '../../hooks/auth'
 import { api } from '../../services/api'
@@ -25,6 +25,8 @@ export function Profile() {
   const [avatar, setAvatar] = useState<string | undefined>(user?.avatar)
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
 
+  const navigate = useNavigate()
+
   const avatarUrl = avatar
     ? `${api.defaults.baseURL}/files/${avatar}`
     : defaultAvatar
@@ -32,12 +34,14 @@ export function Profile() {
   function handleUpdate(event: FormEvent) {
     event.preventDefault()
 
-    const userData: User = {
+    const updated: User = {
       name,
       email,
       old_password: passwordOld,
       password: passwordNew,
     }
+
+    const userUpdated = Object.assign(user!, updated)
 
     if (passwordOld && !passwordNew) {
       alert('Por favor, informe a nova senha.')
@@ -45,14 +49,14 @@ export function Profile() {
     }
 
     if (passwordOld) {
-      userData.old_password = passwordOld
+      updated.old_password = passwordOld
     }
 
     if (passwordNew) {
-      userData.password = passwordNew
+      updated.password = passwordNew
     }
 
-    updateProfile({ user: userData, avatarFile })
+    updateProfile({ user: userUpdated, avatarFile })
   }
 
   function handleChangeAvatar(event: ChangeEvent<HTMLInputElement>) {
@@ -70,9 +74,9 @@ export function Profile() {
   return (
     <Container>
       <header>
-        <Link to="/">
+        <button type="button" onClick={() => navigate(-1)}>
           <FiArrowLeft />
-        </Link>
+        </button>
       </header>
 
       <Form onSubmit={handleUpdate}>

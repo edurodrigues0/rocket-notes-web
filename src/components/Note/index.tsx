@@ -11,7 +11,7 @@ interface Note {
   tags: Tag[]
 }
 
-interface NoteProps {
+interface NoteProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   data: Note
 }
 

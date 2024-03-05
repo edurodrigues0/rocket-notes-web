@@ -51,6 +51,10 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
     const token = localStorage.getItem('@rocketnotes:token')
     const user = localStorage.getItem('@rocketnotes:user')
 
+    if (token === null) {
+      signOut()
+    }
+
     if (token && user) {
       api.defaults.headers.common.Authorization = `Bearer ${token}`
 
